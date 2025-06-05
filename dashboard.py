@@ -1,15 +1,21 @@
-import sqlite3
+import gspread
 import pandas as pd
+from oauth2client.service_account import ServiceAccountCredentials
 import streamlit as st
 
-def load_from_db():
-    conn = sqlite3.connect('crypto_data.db')                                            #connect to database
-    df = pd.read_sql_query("SELECT * FROM crypto_prices", conn)                         #SQL query to get all prices stored in db
-    conn.close()                                                                        #closing connection to avoid rate limits and to lower memory usage
-    return df
+def fetch_sheet_data():
+    scope = ["https://spreadsheets.google.com/feeds",
+             "https://www.googleapis.com/auth/drive"]
+    
+    creds = ServiceAccountCredentials.from_json_keyfile_name("dark-star-462021-r3-2dad6644a32a.json", scope)   #Storing Google credentials as a var
+    client = gspread.authorize(creds)                                                                          #Using creds to access worksheet
+    sheet = client.open("CryptoData").worksheet("prices")
+    data = sheet.get_all_records()
+    return pd.DataFrame(data)
 
 st.title("Live Crypto-currency Price Tracker")
-df = load_from_db()
-df_deduped = df.drop_duplicates(subset=['timestamp', 'coin'])                           #removing duplicates; IFF every pricepoint is significant, group each price per timestamp and use mean instead of dropping
+df = fetch_sheet_data()
+df['timestamp'] = pd.to_datetime(df['timestamp'])
+df_deduped = df.drop_duplicates(subset=['timestamp', 'coin'])                                                   #removing dupliacate values; IFF every pricepoint is significant, instead of removing duplicates group by timestamp and use mean
 pivoted = df_deduped.pivot(index='timestamp', columns='coin', values='price_usd')
 st.line_chart(pivoted)

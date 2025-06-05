@@ -1,0 +1,28 @@
+name: Run ETL every 15 mins
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run ETL
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: "dark-star-462021-r3-2dad6644a32a.json"
+        run: |
+          python main.py
