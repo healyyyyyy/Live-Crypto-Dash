@@ -19,7 +19,7 @@ def fetch_and_append_prices(sheet):                                             
 
 def fetch_sheet_data():                                                                                                 #Connecting and reading from Sheets
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds_dict = st.secrets["gcp"]
+    creds_dict = st.secrets["gcp"]                                                                                      #google cloud platform credential dictionary
     creds_json = json.dumps(dict(creds_dict))
     creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(creds_json), scope)
     client = gspread.authorize(creds)
