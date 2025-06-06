@@ -7,7 +7,7 @@ def load_data(data):                                                            
     
     creds = ServiceAccountCredentials.from_json_keyfile_name("dark-star-462021-r3-2dad6644a32a.json", scope)    #authorizing Google API to read / write in sheet
     client = gspread.authorize(creds)
-    sheet = client.open("CryptoData").worksheet("prices")
+    sheet = client.open("CryptoData").worksheet("PriceSheet")
 
     for row in data:
         sheet.append_row([row['coin'], row['price_usd'], row['timestamp']])                                     #Writing returned data from API into Google Sheet

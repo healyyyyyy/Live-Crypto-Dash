@@ -28,7 +28,7 @@ def fetch_sheet_data():
     client = gspread.authorize(creds)
 
     # Open Google Sheet and target the 'prices' worksheet
-    sheet = client.open("CryptoData").worksheet("prices")
+    sheet = client.open("CryptoData").worksheet("PriceSheet")
 
     # Append latest data (Bitcoin and Ethereum prices)
     fetch_and_append_prices(sheet)
