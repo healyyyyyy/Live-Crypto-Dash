@@ -34,7 +34,7 @@ def fetch_sheet_data():
     fetch_and_append_prices(sheet)
 
     # Load all data from sheet into DataFrame
-    data = sheet.get_all_records()
+    data = sheet.get_all_records(expected_headers=["timestamp", "coin", "price"])
     return pd.DataFrame(data)
 
 # Streamlit app layout
@@ -44,9 +44,9 @@ df = fetch_sheet_data()
 
 # Preprocess and visualize
 if not df.empty:
-    df['Time_stamp'] = pd.to_datetime(df['Time_stamp'])
-    df_deduped = df.drop_duplicates(subset=['Time_stamp', 'Coin'])
-    pivoted = df_deduped.pivot(index='Time_stamp', columns='Coin', values='Price_USD')
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    df_deduped = df.drop_duplicates(subset=['timestamp', 'coin'])
+    pivoted = df_deduped.pivot(index='timestamp', columns='coin', values='price')
     st.line_chart(pivoted)
 else:
     st.warning("No data found in the Google Sheet.")
