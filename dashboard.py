@@ -8,7 +8,7 @@ import streamlit as st
 
 # Function to fetch live crypto prices and append to Google Sheet
 def fetch_and_append_prices(sheet):
-    url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
+    url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,dogecoin,tron,bnb&vs_currencies=usd"
     response = requests.get(url)
     prices = response.json()
 

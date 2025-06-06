@@ -3,7 +3,7 @@ import requests
 def fetch_crypto_data():
     url = 'https://api.coingecko.com/api/v3/simple/price'           #CoinGecko API
     params = {                                                      #Selecting parameters to extract
-        'ids': 'bitcoin,ethereum',
+        'ids': 'bitcoin,ethereum,dogecoin,tron,bnb',
         'vs_currencies': 'usd',
         'include_last_updated_at': 'true'
     }
