@@ -3,7 +3,7 @@
 Previous Release: 
 [Version 1.0](https://github.com/healyyyyyy/Live-Crypto-Dashboard-local)
 
-**Version 1.2**
+**Version 2.0**
 
 ---
 
