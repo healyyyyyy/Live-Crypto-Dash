@@ -1,13 +1,15 @@
 import gspread
+import json
 import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
 import streamlit as st
 
-def fetch_sheet_data():
-    scope = ["https://spreadsheets.google.com/feeds",
-             "https://www.googleapis.com/auth/drive"]
-    
-    creds = ServiceAccountCredentials.from_json_keyfile_name("dark-star-462021-r3-2dad6644a32a.json", scope)   #Storing Google credentials as a var
+def fetch_sheet_data():   
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    # Load from secrets
+    creds_dict = st.secrets["gcp"]
+    creds_json = json.dumps(creds_dict)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(creds_json), scope)
     client = gspread.authorize(creds)                                                                          #Using creds to access worksheet
     sheet = client.open("CryptoData").worksheet("prices")
     data = sheet.get_all_records()
