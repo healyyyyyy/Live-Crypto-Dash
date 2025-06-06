@@ -1,4 +1,4 @@
-name: Run ETL every 15 mins
+name: Run ETL pipeline every 15 mins
 
 on:
   schedule:

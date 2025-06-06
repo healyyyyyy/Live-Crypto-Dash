@@ -8,6 +8,8 @@ def fetch_sheet_data():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     # Load from secrets
     creds_dict = st.secrets["gcp"]
+    gcp_secrets = dict(st.secrets["gcp"])
+    json_data = json.dumps(gcp_secrets)
     creds_json = json.dumps(creds_dict)
     creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(creds_json), scope)
     client = gspread.authorize(creds)                                                                          #Using creds to access worksheet
