@@ -3,7 +3,7 @@
 Previous Release: 
 [Version 1.0](https://github.com/healyyyyyy/Live-Crypto-Dashboard-local)
 
-**Version 2.0**
+**Version 1.1**
 
 ---
 
@@ -18,11 +18,12 @@ This project is a basic cryptocurrency ETL (Extract, Transform, Load) pipeline f
 This is a personal project I took on to help me understand and pivot towards data engineering, from a data analysis background.
 
 Learning objectives:
--Writing scripts
--Understanding ETL v/s ELT
--Deploying a dashboard
--Interact with cloubd based tools
--Hands-on approach to data freshness, duplication, and structure
+
+- Writing scripts
+- Understanding ETL v/s ELT
+- Deploying a dashboard
+- Interact with cloubd based tools
+- Hands-on approach to data freshness, duplication, and structure
 
 ---
 
