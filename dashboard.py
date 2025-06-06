@@ -1,12 +1,13 @@
-import streamlit as st
-import pandas as pd
 import gspread
+import json
+import pandas as pd
+import requests
+import datetime
 from oauth2client.service_account import ServiceAccountCredentials
-import time
+import streamlit as st
 
-st.set_page_config(page_title="Crypto Dashboard", layout="wide")
-
-def fetch_and_append_prices(sheet): #add data to google sheet
+# Function to fetch live crypto prices and append to Google Sheet
+def fetch_and_append_prices(sheet):
     url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
     response = requests.get(url)
     prices = response.json()
@@ -18,33 +19,34 @@ def fetch_and_append_prices(sheet): #add data to google sheet
         price = prices[coin]['usd']
         sheet.append_row([timestamp, coin, price])
 
-# Fetch data from Google Sheets
+# Function to connect and load Google Sheet data
 def fetch_sheet_data():
-    # Convert AttrDict to dict
-    gcp_credentials = dict(st.secrets["gcp"])
-    
-    # Define scope and create credentials
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(gcp_credentials, scope)
-
+    creds_dict = st.secrets["gcp"]
+    creds_json = json.dumps(dict(creds_dict))
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(creds_json), scope)
     client = gspread.authorize(creds)
-    sheet = client.open_by_key(st.secrets["sheet_id"]).sheet1
+
+    # Open Google Sheet and target the 'prices' worksheet
+    sheet = client.open("CryptoData").worksheet("prices")
+
+    # Append latest data (Bitcoin and Ethereum prices)
     fetch_and_append_prices(sheet)
+
+    # Load all data from sheet into DataFrame
     data = sheet.get_all_records()
-    
-    # Convert to DataFrame
-    df = pd.DataFrame(data)
-    return df
+    return pd.DataFrame(data)
 
-# Live update every X seconds
-REFRESH_INTERVAL = 60  # seconds
-placeholder = st.empty()
+# Streamlit app layout
+st.title("📈 Live Crypto Prices Dashboard")
 
-while True:
-    df = fetch_sheet_data()
-    
-    with placeholder.container():
-        st.title("📈 Live Crypto Prices Dashboard")
-        st.dataframe(df)
+df = fetch_sheet_data()
 
-    time.sleep(REFRESH_INTERVAL)
+# Preprocess and visualize
+if not df.empty:
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    df_deduped = df.drop_duplicates(subset=['timestamp', 'coin'])
+    pivoted = df_deduped.pivot(index='Time_stamp', columns='Coin', values='Price_USD')
+    st.line_chart(pivoted)
+else:
+    st.warning("No data found in the Google Sheet.")
