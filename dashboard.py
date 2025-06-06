@@ -1,25 +1,38 @@
-import gspread
-import json
-import pandas as pd
-from oauth2client.service_account import ServiceAccountCredentials
 import streamlit as st
+import pandas as pd
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import time
 
-def fetch_sheet_data():   
+st.set_page_config(page_title="Crypto Dashboard", layout="wide")
+
+# Fetch data from Google Sheets
+def fetch_sheet_data():
+    # Convert AttrDict to dict
+    gcp_credentials = dict(st.secrets["gcp"])
+    
+    # Define scope and create credentials
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    # Load from secrets
-    creds_dict = st.secrets["gcp"]
-    gcp_secrets = dict(st.secrets["gcp"])
-    json_data = json.dumps(gcp_secrets)
-    creds_json = json.dumps(creds_dict)
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(creds_json), scope)
-    client = gspread.authorize(creds)                                                                          #Using creds to access worksheet
-    sheet = client.open("CryptoData").worksheet("prices")
-    data = sheet.get_all_records()
-    return pd.DataFrame(data)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(gcp_credentials, scope)
 
-st.title("Live Crypto-currency Price Tracker")
-df = fetch_sheet_data()
-df['timestamp'] = pd.to_datetime(df['timestamp'])
-df_deduped = df.drop_duplicates(subset=['timestamp', 'coin'])                                                   #removing dupliacate values; IFF every pricepoint is significant, instead of removing duplicates group by timestamp and use mean
-pivoted = df_deduped.pivot(index='timestamp', columns='coin', values='price_usd')
-st.line_chart(pivoted)
+    client = gspread.authorize(creds)
+    sheet = client.open_by_key(st.secrets["sheet_id"]).sheet1
+    data = sheet.get_all_records()
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
+    return df
+
+# Live update every X seconds
+REFRESH_INTERVAL = 60  # seconds
+
+placeholder = st.empty()
+
+while True:
+    df = fetch_sheet_data()
+    
+    with placeholder.container():
+        st.title("📈 Live Crypto Prices Dashboard")
+        st.dataframe(df)
+
+    time.sleep(REFRESH_INTERVAL)
