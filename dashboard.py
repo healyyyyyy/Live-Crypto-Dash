@@ -44,8 +44,8 @@ df = fetch_sheet_data()
 
 # Preprocess and visualize
 if not df.empty:
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
-    df_deduped = df.drop_duplicates(subset=['timestamp', 'coin'])
+    df['Time_stamp'] = pd.to_datetime(df['Time_stamp'])
+    df_deduped = df.drop_duplicates(subset=['Time_stamp', 'Coin'])
     pivoted = df_deduped.pivot(index='Time_stamp', columns='Coin', values='Price_USD')
     st.line_chart(pivoted)
 else:
