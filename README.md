@@ -1,6 +1,6 @@
 # Live Cryptocurrency Dashboard (v1.1 - Cloud Enhancement)
 
-Previous Release: [Version 1.0 - Local SQLite Version](https://github.com/healyyyyyy/Live-Crypto-Dash-v1)
+Previous Release: [Version 1.0 - Local SQLite Version](https://github.com/healyyyyyy/Live-Crypto-Dashboard-local)
 
 [Streamlit Dashboard](https://live-crypto-dashboard.streamlit.app)
 
